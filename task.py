@@ -3,14 +3,27 @@ from RPA.Browser.Selenium import Selenium
 from RPA.HTTP import HTTP
 from RPA.PDF import PDF
 from RPA.Archive import Archive
+from RPA.Dialogs import Dialogs
+
 import csv
 import os
 
 browser = Selenium()
+dialogs = Dialogs()
 
 
 def open_the_website(url):
     browser.open_available_browser(url)
+
+
+def ask_for_the_csv_file_link():
+    dialogs.add_heading("Some text")
+    dialogs.add_text("Empty space")
+    # dialogs.add_text_input(
+    #    name="csv_file", label="csv_file", placeholder="insert url", rows=5)
+    # result = dialogs.run_dialog()
+    dialogs.run_dialog()
+   # print(result.csv_file)
 
 
 def close_popup_window():
@@ -19,13 +32,15 @@ def close_popup_window():
 
 def download_the_csv_file():
     http = HTTP()
-    http.download('https://robotsparebinindustries.com/orders.csv', overwrite=True)
+    http.download(
+        'https://robotsparebinindustries.com/orders.csv', overwrite=True)
 
 
 def fill_the_form(body, head, legs, address):
     browser.select_from_list_by_value("id:head", head)
     browser.click_element("id:id-body-" + body)
-    id_number = browser.get_element_attribute("//input[@placeholder='Enter the part number for the legs']", "id")
+    id_number = browser.get_element_attribute(
+        "//input[@placeholder='Enter the part number for the legs']", "id")
     browser.input_text("id:" + id_number, legs)
     browser.input_text("id:address", address)
 
@@ -40,7 +55,6 @@ def capture_screenshot_of_preview_and_order(order_number):
     pdf.add_files_to_pdf(files=[f"./output/receipt_{order_number}.pdf",
                                 f"./output/robot_img_{order_number}.png:align=center"],
                          target_document=f"./output/orders/order_number_{order_number}.pdf")
-
 
 
 def zip_orders_to_file(order_file):
@@ -84,6 +98,7 @@ def main():
     try:
         open_the_website("https://robotsparebinindustries.com/#/robot-order")
         close_popup_window()
+        ask_for_the_csv_file_link()
         download_the_csv_file()
         fill_and_submit_the_form_using_the_data_from_the_csv_file()
         zip_orders_to_file("./output/orders/order_number_1.pdf")
