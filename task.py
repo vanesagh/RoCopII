@@ -3,37 +3,34 @@ from RPA.Browser.Selenium import Selenium
 from RPA.HTTP import HTTP
 from RPA.PDF import PDF
 from RPA.Archive import Archive
-from RPA.Dialogs import Dialogs
+from RPA.Robocorp.Vault import Vault
+import robot.libraries.Dialogs as Dialogs
 
 import csv
 import os
 
 browser = Selenium()
-dialogs = Dialogs()
+vault = Vault()
 
 
-def open_the_website(url):
-    browser.open_available_browser(url)
+def open_the_website():
+    url = vault.get_secret('credentials')
+    print(url['url_robot_website'])
+    browser.open_available_browser(url['url_robot_website'])
 
 
 def ask_for_the_csv_file_link():
-    dialogs.add_heading("Some text")
-    dialogs.add_text("Empty space")
-    # dialogs.add_text_input(
-    #    name="csv_file", label="csv_file", placeholder="insert url", rows=5)
-    # result = dialogs.run_dialog()
-    dialogs.run_dialog()
-   # print(result.csv_file)
+    message = "Please provide the link to download the csv file"
+    return Dialogs.get_value_from_user(message=message, default_value="https://...")
 
 
 def close_popup_window():
     browser.click_button('css:.btn.btn-dark')
 
 
-def download_the_csv_file():
+def download_the_csv_file(csv_link):
     http = HTTP()
-    http.download(
-        'https://robotsparebinindustries.com/orders.csv', overwrite=True)
+    http.download(csv_link, overwrite=True)
 
 
 def fill_the_form(body, head, legs, address):
@@ -57,9 +54,8 @@ def capture_screenshot_of_preview_and_order(order_number):
                          target_document=f"./output/orders/order_number_{order_number}.pdf")
 
 
-def zip_orders_to_file(order_file):
+def zip_orders_to_file():
     archive = Archive()
-    print(order_file)
     archive.archive_folder_with_zip("./output/orders", "./output/orders.zip")
 
 
@@ -96,12 +92,15 @@ def fill_and_submit_the_form_using_the_data_from_the_csv_file():
 
 def main():
     try:
-        open_the_website("https://robotsparebinindustries.com/#/robot-order")
+        open_the_website()
         close_popup_window()
-        ask_for_the_csv_file_link()
-        download_the_csv_file()
+        csv_file = ask_for_the_csv_file_link()
+        # 'https://robotsparebinindustries.com/orders.csv'
+        download_the_csv_file(csv_file)
         fill_and_submit_the_form_using_the_data_from_the_csv_file()
-        zip_orders_to_file("./output/orders/order_number_1.pdf")
+        zip_orders_to_file()
+        Dialogs.MessageDialog(
+            "Robot generated the whole tasks succesfully").show()
 
     finally:
         browser.close_all_browsers()

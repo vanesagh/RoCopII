@@ -5,9 +5,8 @@ More information can be found [here](https://robocorp.com/docs/courses/build-a-r
 
 I decided to build it using only Python.
 
-
-- Uses only Python.
-- Provides a simple template to start from (`task.py`).
+- The whole logic of the tasks are included in the task.py file
+- conda.yaml contains the required dependencies
 
 ## Learning materials
 
