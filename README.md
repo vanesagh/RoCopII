@@ -7,6 +7,8 @@ I decided to build it using only Python.
 
 - The whole logic of the tasks are included in the task.py file
 - conda.yaml contains the required dependencies
+- vault is used to store the URL of the robot site. It is not the appropiate way of using vault but it is used with demonstration purposes.
+- There is an issue with the action in github. I hope I can manage solve it soon :)
 
 ## Learning materials
 
