@@ -1,6 +1,9 @@
 name: Upload to Control Room
 
-on: [push]
+on:
+  push:
+    branches:
+      - master
       
 jobs:
   upload-to-control-room:
