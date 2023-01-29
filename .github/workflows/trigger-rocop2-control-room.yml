@@ -1,21 +1,15 @@
 name: Upload to Control Room
 
-on:
-  push:
-    branches:
-      - master
+on: [push]
       
 jobs:
   upload-to-control-room:
     runs-on: ubuntu-latest
     name: Upload to Control Room   
     steps:
-      - uses: actions/checkout@master
-      - name: Use Node.js 16.x
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16.x
-      - name: Upload Robot to Control Room
+      - name: Checkout files from repositor
+      - uses: actions/checkout@v2
+      - name: Upload robot to Control Room
         uses: robocorp/action-upload-robot@v1
         with:
           workspace-key: ${{ secrets.ROBOCORP_WORKSPACE_KEY }}
